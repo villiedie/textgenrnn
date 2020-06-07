@@ -1,5 +1,5 @@
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.layers import Input, Embedding, Dense, LSTM, Bidirectional
+from tensorflow.keras.layers import Input, Embedding, Dense, LSTM, Bidirectional, GRU
 from tensorflow.keras.layers import concatenate, Reshape, SpatialDropout1D
 from tensorflow.keras.models import Model
 from tensorflow.keras import backend as K
@@ -79,21 +79,21 @@ def new_rnn(cfg, layer_num):
     use_cudnnlstm = K.backend() == 'tensorflow' and len(config.get_visible_devices('GPU')) > 0
     if use_cudnnlstm:
         if cfg['rnn_bidirectional']:
-            return Bidirectional(LSTM(cfg['rnn_size'],
+            return Bidirectional(GRU(cfg['rnn_size'],
                                            return_sequences=True),
                                  name='rnn_{}'.format(layer_num))
 
-        return LSTM(cfg['rnn_size'],
+        return GRU(cfg['rnn_size'],
                          return_sequences=True,
                          name='rnn_{}'.format(layer_num))
     else:
         if cfg['rnn_bidirectional']:
-            return Bidirectional(LSTM(cfg['rnn_size'],
+            return Bidirectional(GRU(cfg['rnn_size'],
                                       return_sequences=True,
                                       recurrent_activation='sigmoid'),
                                  name='rnn_{}'.format(layer_num))
 
-        return LSTM(cfg['rnn_size'],
+        return GRU(cfg['rnn_size'],
                     return_sequences=True,
                     recurrent_activation='sigmoid',
                     name='rnn_{}'.format(layer_num))
